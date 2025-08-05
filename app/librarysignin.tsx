@@ -1,16 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import SignIn from '../components/signin';
+import SignOut from '../components/signout';
 
 export default function TabTwoScreen() {
+  const [showSignIn, setShowSignIn] = useState(false);
+  const [showSignOut, setShowSignOut] = useState(false);
+
   const handleSignIn = () => {
     console.log('Sign In pressed');
-
-
-
-              };
+    setShowSignIn(true);
+  };
 
   const handleSignOut = () => {
     console.log('Sign Out pressed');
+    setShowSignOut(true);
+  };
+
+  const handleSignInSubmit = (studentId: string) => {
+    console.log('Student ID submitted:', studentId);
+    setShowSignIn(false);
+    setShowSignOut(false);
+  };
+
+  const handleSignInClose = () => {
+    setShowSignIn(false);
+  };
+
+  const handleSignOutClose = () => {
+    setShowSignOut(false);
   };
 
   return (
@@ -33,6 +51,17 @@ export default function TabTwoScreen() {
           </View>
         </View>
       </ImageBackground>
+
+      <SignIn 
+        visible={showSignIn}
+        onClose={handleSignInClose}
+        onSubmit={handleSignInSubmit}
+      />      
+      <SignOut 
+        visible={showSignOut}
+        onClose={handleSignOutClose}
+        onSubmit={handleSignInSubmit}
+      />
     </View>
   );
 }
