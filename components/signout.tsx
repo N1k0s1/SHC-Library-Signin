@@ -49,18 +49,27 @@ export default function SignOut({ visible, onClose, onSubmit }: SignOutProps) {
                 onChangeText={setStudentId}
                 placeholder="Student ID"
                 placeholderTextColor="#999"
-                keyboardType="default"
+                keyboardType="numeric"
                 autoCapitalize="characters"
                 autoFocus={true}
               />
               
-              <TouchableOpacity
-                style={[styles.doneButton, !studentId.trim() && styles.doneButtonDisabled]}
-                onPress={handleDone}
-                disabled={!studentId.trim()}
-              >
-                <Text style={styles.doneButtonText}>Done</Text>
-              </TouchableOpacity>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={handleClose}
+                >
+                  <Text style={styles.closeButtonText}>Close</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity
+                  style={[styles.doneButton, !studentId.trim() && styles.doneButtonDisabled]}
+                  onPress={handleDone}
+                  disabled={!studentId.trim()}
+                >
+                  <Text style={styles.doneButtonText}>Done</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </ImageBackground>
@@ -132,7 +141,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 32,
     paddingVertical: 12,
-    alignSelf: 'flex-end',
+    flex: 1,
+    marginLeft: 12,
   },
   doneButtonDisabled: {
     opacity: 0.5,
@@ -141,5 +151,24 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
+    textAlign: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+  },
+  closeButton: {
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    borderRadius: 8,
+    paddingHorizontal: 32,
+    paddingVertical: 12,
+    flex: 1,
+  },
+  closeButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });

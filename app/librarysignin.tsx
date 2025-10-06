@@ -106,8 +106,8 @@ const styles = StyleSheet.create({
   },
   signButton: {
     backgroundColor: '#335E7A',
-    paddingHorizontal: 265,
-    paddingVertical: 122,
+    paddingHorizontal: 150,
+    paddingVertical: 90,
     borderRadius: 12,
     minWidth: 140,
     shadowColor: '#000',

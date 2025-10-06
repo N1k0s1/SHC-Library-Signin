@@ -9,16 +9,25 @@ interface SignInProps {
 
 export default function SignIn({ visible, onClose, onSubmit }: SignInProps) {
   const [studentId, setStudentId] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleDone = () => {
     if (studentId.trim()) {
       onSubmit(studentId.trim());
       setStudentId('');
+      setShowSuccess(true);
+      
+      // Hide success message after 2 seconds and close modal
+      setTimeout(() => {
+        setShowSuccess(false);
+        onClose();
+      }, 2000);
     }
   };
 
   const handleClose = () => {
     setStudentId('');
+    setShowSuccess(false);
     onClose();
   };
 
@@ -37,31 +46,47 @@ export default function SignIn({ visible, onClose, onSubmit }: SignInProps) {
         >
           <View style={styles.backgroundOverlay} />
           <View style={styles.container}>
-            <View style={styles.modalContent}>
-              <Text style={styles.title}>Student ID</Text>
-              <Text style={styles.subtitle}>
-                Enter in your Student ID manually, or scan your Student ID using the provided scanner.
-              </Text>
-              
-              <TextInput
-                style={styles.input}
-                value={studentId}
-                onChangeText={setStudentId}
-                placeholder="Student ID"
-                placeholderTextColor="#999"
-                keyboardType="default"
-                autoCapitalize="characters"
-                autoFocus={true}
-              />
-              
-              <TouchableOpacity
-                style={[styles.doneButton, !studentId.trim() && styles.doneButtonDisabled]}
-                onPress={handleDone}
-                disabled={!studentId.trim()}
-              >
-                <Text style={styles.doneButtonText}>Done</Text>
-              </TouchableOpacity>
-            </View>
+            {!showSuccess ? (
+              <View style={styles.modalContent}>
+                <Text style={styles.title}>Student ID</Text>
+                <Text style={styles.subtitle}>
+                  Enter in your Student ID manually, or scan your Student ID using the provided scanner.
+                </Text>
+                
+                <TextInput
+                  style={styles.input}
+                  value={studentId}
+                  onChangeText={setStudentId}
+                  placeholder="Student ID"
+                  placeholderTextColor="#999"
+                  keyboardType="numeric"
+                  autoCapitalize="characters"
+                  autoFocus={true}
+                />
+                
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={handleClose}
+                  >
+                    <Text style={styles.closeButtonText}>Close</Text>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity
+                    style={[styles.doneButton, !studentId.trim() && styles.doneButtonDisabled]}
+                    onPress={handleDone}
+                    disabled={!studentId.trim()}
+                  >
+                    <Text style={styles.doneButtonText}>Done</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : (
+              <View style={styles.successModal}>
+                <Text style={styles.successTitle}>Successfully signed in!</Text>
+                <Text style={styles.successSubtitle}>Welcome to the library</Text>
+              </View>
+            )}
           </View>
         </ImageBackground>
       </View>
@@ -101,12 +126,33 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     alignItems: 'center',
   },
+  successModal: {
+    backgroundColor: 'rgba(46, 125, 50, 0.95)',
+    borderRadius: 16,
+    padding: 40,
+    width: '90%',
+    maxWidth: 400,
+    alignItems: 'center',
+  },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     color: 'white',
     marginBottom: 16,
     textAlign: 'center',
+  },
+  successTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  successSubtitle: {
+    fontSize: 16,
+    color: 'white',
+    textAlign: 'center',
+    opacity: 0.9,
   },
   subtitle: {
     fontSize: 16,
@@ -132,7 +178,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 32,
     paddingVertical: 12,
-    alignSelf: 'flex-end',
+    flex: 1,
+    marginLeft: 12,
   },
   doneButtonDisabled: {
     opacity: 0.5,
@@ -141,5 +188,24 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
+    textAlign: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+  },
+  closeButton: {
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    borderRadius: 8,
+    paddingHorizontal: 32,
+    paddingVertical: 12,
+    flex: 1,
+  },
+  closeButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });
