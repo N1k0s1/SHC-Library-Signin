@@ -34,7 +34,7 @@ This is a sign-in portal developed for the Sacred Heart College library, as my N
    ```
    This will launch the Expo development server. You can then open the app on your device, emulator, or browser.
 - **Problems**      
-If you're having any problems, check the following is correct, and feel free to reach out to my if you're still having trouble!
+If you're having any problems, check the following is correct, and feel free to reach out to me if you're still having trouble!
    - Make sure you have [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
    - For mobile testing, install the [Expo Go](https://expo.dev/client) app on your device, otherwise you'll need to create a development build through EAS
 
