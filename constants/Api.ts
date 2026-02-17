@@ -21,7 +21,7 @@ const getApiBaseUrl = (): string => {
   }
   */
   
-  // Use the deployed Railway backend for both Development and Production
+  // Use the deployed Heroku backend for both Development and Production
   return 'https://shc-library-backend-f661ae1b6b59.herokuapp.com';
 };
 
