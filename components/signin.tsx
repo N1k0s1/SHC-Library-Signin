@@ -10,8 +10,9 @@ interface SignInProps {
 
 export default function SignIn({ visible, onClose, onSubmit }: SignInProps) {
   const [studentId, setStudentId] = useState('');
+  const [name, setName] = useState('');
   const [classCode, setClassCode] = useState('');
-  const [step, setStep] = useState<'ID_INPUT' | 'CLASS_CODE_INPUT' | 'REASON_SELECT'>('ID_INPUT');
+  const [step, setStep] = useState<'ID_INPUT' | 'NAME_INPUT' | 'CLASS_CODE_INPUT' | 'REASON_SELECT'>('ID_INPUT');
   const [loading, setLoading] = useState(false);
 
   const REASONS = [
@@ -34,8 +35,8 @@ export default function SignIn({ visible, onClose, onSubmit }: SignInProps) {
           // Already in library -> Sign Out (no reason needed)
           await performToggle();
         } else {
-          // Not in library -> Sign In (ask for class code)
-          setStep('CLASS_CODE_INPUT');
+          // Not in library -> Sign In (ask for name first)
+          setStep('NAME_INPUT');
           setLoading(false);
         }
       } catch (error) {
@@ -43,6 +44,12 @@ export default function SignIn({ visible, onClose, onSubmit }: SignInProps) {
         // Fallback to toggle if status check fails
         await performToggle();
       }
+    }
+  };
+
+  const handleNameDone = () => {
+    if (name.trim()) {
+      setStep('CLASS_CODE_INPUT');
     }
   };
 
@@ -54,7 +61,7 @@ export default function SignIn({ visible, onClose, onSubmit }: SignInProps) {
 
   const performToggle = async (reason?: string) => {
     try {
-      const result = await apiService.toggleStudentSignInOut(studentId.trim(), reason, classCode.trim());
+      const result = await apiService.toggleStudentSignInOut(studentId.trim(), name.trim(), reason, classCode.trim());
       
       if (result.success) {
         onSubmit(studentId.trim());
@@ -89,6 +96,7 @@ export default function SignIn({ visible, onClose, onSubmit }: SignInProps) {
 
   const resetState = () => {
     setStudentId('');
+    setName('');
     setClassCode('');
     setStep('ID_INPUT');
     setLoading(false);
@@ -145,6 +153,38 @@ export default function SignIn({ visible, onClose, onSubmit }: SignInProps) {
                   </TouchableOpacity>
                 </View>
               </>
+            ) : step === 'NAME_INPUT' ? (
+              <>
+                <Text style={styles.subtitle}>
+                  Please enter your full name.
+                </Text>
+                
+                <TextInput
+                  style={styles.input}
+                  value={name}
+                  onChangeText={setName}
+                  placeholder="Full Name"
+                  placeholderTextColor="#999"
+                  autoCapitalize="words"
+                />
+                
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={() => setStep('ID_INPUT')}
+                  >
+                    <Text style={styles.closeButtonText}>Back</Text>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity
+                    style={[styles.doneButton, !name.trim() && styles.doneButtonDisabled]}
+                    onPress={handleNameDone}
+                    disabled={!name.trim()}
+                  >
+                    <Text style={styles.doneButtonText}>Next</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
             ) : step === 'CLASS_CODE_INPUT' ? (
               <>
                 <Text style={styles.subtitle}>
@@ -163,7 +203,7 @@ export default function SignIn({ visible, onClose, onSubmit }: SignInProps) {
                 <View style={styles.buttonContainer}>
                   <TouchableOpacity
                     style={styles.closeButton}
-                    onPress={() => setStep('ID_INPUT')}
+                    onPress={() => setStep('NAME_INPUT')}
                   >
                     <Text style={styles.closeButtonText}>Back</Text>
                   </TouchableOpacity>

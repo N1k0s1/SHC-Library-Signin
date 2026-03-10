@@ -52,10 +52,10 @@ class ApiService {
   /**
    * Student sign-in/out toggle
    */
-  async toggleStudentSignInOut(studentId: string, reason?: string, classCode?: string): Promise<ApiResponse> {
+  async toggleStudentSignInOut(studentId: string, name?: string, reason?: string, classCode?: string): Promise<ApiResponse> {
     return this.makeRequest(API_ENDPOINTS.STUDENT_SIGNIN_OUT, {
       method: 'POST',
-      body: JSON.stringify({ studentId, reason, classCode }),
+      body: JSON.stringify({ studentId, name, reason, classCode }),
     });
   }
 
