@@ -3,7 +3,7 @@
  * Handles all API communications with the backend
  */
 
-import { API_ENDPOINTS, API_TIMEOUT, ApiResponse, DEFAULT_HEADERS } from '../constants/Api';
+import { API_TIMEOUT, ApiResponse, getApiEndpoints, getDefaultHeaders } from '../constants/Api';
 
 class ApiService {
   /**
@@ -20,7 +20,7 @@ class ApiService {
       const response = await fetch(url, {
         ...options,
         headers: {
-          ...DEFAULT_HEADERS,
+          ...getDefaultHeaders(),
           ...options.headers,
         },
         signal: controller.signal,
@@ -53,7 +53,8 @@ class ApiService {
    * Student sign-in/out toggle
    */
   async toggleStudentSignInOut(studentId: string, name?: string, reason?: string, classCode?: string): Promise<ApiResponse> {
-    return this.makeRequest(API_ENDPOINTS.STUDENT_SIGNIN_OUT, {
+    const endpoints = getApiEndpoints();
+    return this.makeRequest(endpoints.STUDENT_SIGNIN_OUT, {
       method: 'POST',
       body: JSON.stringify({ studentId, name, reason, classCode }),
     });
@@ -63,7 +64,8 @@ class ApiService {
    * Explicit student sign-in
    */
   async signInStudent(studentId: string): Promise<ApiResponse> {
-    return this.makeRequest(API_ENDPOINTS.STUDENT_SIGNIN, {
+    const endpoints = getApiEndpoints();
+    return this.makeRequest(endpoints.STUDENT_SIGNIN, {
       method: 'POST',
       body: JSON.stringify({ studentId }),
     });
@@ -73,7 +75,8 @@ class ApiService {
    * Explicit student sign-out
    */
   async signOutStudent(studentId: string): Promise<ApiResponse> {
-    return this.makeRequest(API_ENDPOINTS.STUDENT_SIGNOUT, {
+    const endpoints = getApiEndpoints();
+    return this.makeRequest(endpoints.STUDENT_SIGNOUT, {
       method: 'POST',
       body: JSON.stringify({ studentId }),
     });
@@ -83,7 +86,8 @@ class ApiService {
    * Get student status
    */
   async getStudentStatus(studentId: string): Promise<ApiResponse<{ studentId: string; isInLibrary: boolean }>> {
-    return this.makeRequest(API_ENDPOINTS.STUDENT_STATUS(studentId), {
+    const endpoints = getApiEndpoints();
+    return this.makeRequest(endpoints.STUDENT_STATUS(studentId), {
       method: 'GET',
     });
   }
@@ -92,7 +96,8 @@ class ApiService {
    * Get background image configuration
    */
   async getBackgroundImage(): Promise<ApiResponse<{ url: string | null }>> {
-    return this.makeRequest(API_ENDPOINTS.BACKGROUND_IMAGE, {
+    const endpoints = getApiEndpoints();
+    return this.makeRequest(endpoints.BACKGROUND_IMAGE, {
       method: 'GET',
     });
   }
@@ -101,7 +106,8 @@ class ApiService {
    * Health check
    */
   async checkHealth(): Promise<ApiResponse> {
-    return this.makeRequest(API_ENDPOINTS.HEALTH, {
+    const endpoints = getApiEndpoints();
+    return this.makeRequest(endpoints.HEALTH, {
       method: 'GET',
     });
   }
