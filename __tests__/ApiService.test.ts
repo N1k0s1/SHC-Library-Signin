@@ -5,16 +5,16 @@
  */
 
 jest.mock('../constants/Api', () => ({
-  API_ENDPOINTS: {
+  getApiEndpoints: () => ({
     STUDENT_SIGNIN_OUT: 'http://api/api/student/toggle',
     STUDENT_SIGNIN: 'http://api/api/checkin',
     STUDENT_SIGNOUT: 'http://api/api/checkout',
     STUDENT_STATUS: (id: string) => `http://api/api/student/status/${id}`,
     BACKGROUND_IMAGE: 'http://api/api/config/background-image',
     HEALTH: 'http://api/health',
-  },
+  }),
+  getDefaultHeaders: () => ({ 'Content-Type': 'application/json' }),
   API_TIMEOUT: 10000,
-  DEFAULT_HEADERS: { 'Content-Type': 'application/json' },
 }));
 
 import { apiService } from '../services/ApiService';

@@ -30,6 +30,9 @@ This is a sign-in portal developed for the Sacred Heart College library, as my N
    npm start
    ```
    This will launch the Expo development server. You can then open the app on your device, emulator, or browser.
+- **API access setup (required):**
+   - Set `EXPO_PUBLIC_API_KEY` in your local environment for default API access, or
+   - Open the in-app local settings menu (⚙️) and save the server URL + API key on the device.
 - **Problems**      
 If you're having any problems, check the following is correct, and feel free to reach out to me if you're still having trouble!
    - Make sure you have [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
