@@ -2,7 +2,7 @@
  * API Configuration for SHC Library Signin App
  */
 
-const DEFAULT_API_BASE_URL = 'https://shc-library-new-backend.vercel.app';
+const DEFAULT_API_BASE_URL = 'https://libthority.vercel.app';
 const DEFAULT_API_KEY = process.env.EXPO_PUBLIC_API_KEY ?? '';
 
 let runtimeApiBaseUrl: string | null = null;
@@ -30,6 +30,7 @@ export const getApiEndpoints = () => {
     STUDENT_STATUS: (studentId: string) => `${apiBaseUrl}/api/student/status/${studentId}`,
     BACKGROUND_IMAGE: `${apiBaseUrl}/api/config/background-image`,
     HEALTH: `${apiBaseUrl}/health`,
+    DEVICE_PAIR: `${apiBaseUrl}/api/device/pair`,
     ADMIN_LOGIN: `${apiBaseUrl}/api/login`,
     ADMIN_DASHBOARD: `${apiBaseUrl}/api/admin/dashboard`,
     ADMIN_STATS: `${apiBaseUrl}/api/admin/stats`,
