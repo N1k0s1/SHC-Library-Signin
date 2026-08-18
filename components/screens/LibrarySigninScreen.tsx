@@ -8,6 +8,7 @@ import LibrarySigninBackground from '@/components/library/LibrarySigninBackgroun
 import LibrarySigninModals from '@/components/library/LibrarySigninModals';
 import { getApiBaseUrl } from '@/constants/Api';
 import { applyStoredApiConfig, saveApiConfig } from '@/services/ApiConfigService';
+import { redeemPairingCode } from '@/services/PairingService';
 
 export default function LibrarySigninScreen() {
   const [showSignIn, setShowSignIn] = useState(false);
@@ -16,6 +17,9 @@ export default function LibrarySigninScreen() {
   const [apiBaseUrlInput, setApiBaseUrlInput] = useState(getApiBaseUrl());
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [savedApiKey, setSavedApiKey] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [pairingCodeInput, setPairingCodeInput] = useState('');
+  const [pairing, setPairing] = useState(false);
 
   useEffect(() => {
     applyStoredApiConfig()
@@ -62,6 +66,23 @@ export default function LibrarySigninScreen() {
     }
   };
 
+  const handlePairDevice = async () => {
+    setPairing(true);
+    try {
+      const result = await redeemPairingCode(pairingCodeInput, apiBaseUrlInput.trim() || undefined);
+      await saveApiConfig({ baseUrl: result.baseUrl, apiKey: result.apiKey });
+      setSavedApiKey(true);
+      setPairingCodeInput('');
+      setApiBaseUrlInput(result.baseUrl);
+      setShowApiConfig(false);
+      Alert.alert('Paired', `This device is now paired as "${result.deviceName}".`);
+    } catch (error) {
+      Alert.alert('Pairing failed', error instanceof Error ? error.message : 'Could not pair this device');
+    } finally {
+      setPairing(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <LibrarySigninBackground>
@@ -80,7 +101,7 @@ export default function LibrarySigninScreen() {
 
       <View style={styles.footer} pointerEvents="none">
         <Text style={styles.footerText}>
-          A Libthority product. About: built and maintained by Libthority.
+          Built and maintained by Libthority.
         </Text>
         <Text style={styles.footerText}>© {new Date().getFullYear()} Libthority. All rights reserved.</Text>
       </View>
@@ -95,38 +116,72 @@ export default function LibrarySigninScreen() {
       <Modal visible={showApiConfig} transparent animationType="fade" onRequestClose={() => setShowApiConfig(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Local API Settings</Text>
-            <Text style={styles.modalSubtitle}>This device will use these values for all requests.</Text>
+            <Text style={styles.modalTitle}>Device Setup</Text>
+            <Text style={styles.modalSubtitle}>
+              Enter the 6-digit pairing code from the admin dashboard (Settings → Pair a Device).
+            </Text>
 
             <TextInput
-              value={apiBaseUrlInput}
-              onChangeText={setApiBaseUrlInput}
-              placeholder="https://your-server.vercel.app"
+              value={pairingCodeInput}
+              onChangeText={setPairingCodeInput}
+              placeholder="000000"
               placeholderTextColor="#9ca3af"
+              keyboardType="number-pad"
+              maxLength={6}
               autoCapitalize="none"
               autoCorrect={false}
-              style={styles.input}
-            />
-
-            <TextInput
-              value={apiKeyInput}
-              onChangeText={setApiKeyInput}
-              placeholder={savedApiKey ? 'Saved (enter new key to replace)' : 'API key'}
-              placeholderTextColor="#9ca3af"
-              autoCapitalize="none"
-              autoCorrect={false}
-              secureTextEntry
-              style={styles.input}
+              style={[styles.input, styles.codeInput]}
             />
 
             <View style={styles.modalActions}>
               <Pressable style={styles.secondaryButton} onPress={() => setShowApiConfig(false)}>
                 <Text style={styles.secondaryButtonText}>Cancel</Text>
               </Pressable>
-              <Pressable style={styles.primaryButton} onPress={handleSaveApiConfig}>
-                <Text style={styles.primaryButtonText}>Save</Text>
+              <Pressable style={styles.primaryButton} onPress={handlePairDevice} disabled={pairing}>
+                <Text style={styles.primaryButtonText}>{pairing ? 'Pairing…' : 'Pair Device'}</Text>
               </Pressable>
             </View>
+
+            <Pressable onPress={() => setShowAdvanced((value) => !value)}>
+              <Text style={styles.advancedToggle}>
+                {showAdvanced ? 'Hide advanced settings' : 'Advanced settings'}
+              </Text>
+            </Pressable>
+
+            {showAdvanced && (
+              <View style={styles.advancedSection}>
+                <Text style={styles.modalSubtitle}>
+                  Manual fallback. Only needed if pairing is unavailable.
+                </Text>
+
+                <TextInput
+                  value={apiBaseUrlInput}
+                  onChangeText={setApiBaseUrlInput}
+                  placeholder="https://your-server.vercel.app"
+                  placeholderTextColor="#9ca3af"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  style={styles.input}
+                />
+
+                <TextInput
+                  value={apiKeyInput}
+                  onChangeText={setApiKeyInput}
+                  placeholder={savedApiKey ? 'Saved (enter new key to replace)' : 'API key'}
+                  placeholderTextColor="#9ca3af"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  secureTextEntry
+                  style={styles.input}
+                />
+
+                <View style={styles.modalActions}>
+                  <Pressable style={styles.primaryButton} onPress={handleSaveApiConfig}>
+                    <Text style={styles.primaryButtonText}>Save manually</Text>
+                  </Pressable>
+                </View>
+              </View>
+            )}
           </View>
         </View>
       </Modal>
@@ -230,5 +285,23 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     color: '#0f172a',
     fontWeight: '600',
+  },
+  codeInput: {
+    fontSize: 28,
+    letterSpacing: 8,
+    textAlign: 'center',
+  },
+  advancedToggle: {
+    marginTop: 14,
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#2563eb',
+    textAlign: 'center',
+  },
+  advancedSection: {
+    marginTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#e2e8f0',
+    paddingTop: 12,
   },
 });
